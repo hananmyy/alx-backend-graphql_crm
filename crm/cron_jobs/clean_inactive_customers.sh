@@ -25,3 +25,5 @@ if [ -n "$OUTPUT" ]; then
 else
   echo "$TIMESTAMP - No output, possible error." >> /tmp/customercleanuplog.txt
 fi
+
+# cwd
