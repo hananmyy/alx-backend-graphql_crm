@@ -31,6 +31,7 @@ def log_crm_heartbeat():
 
 
 def update_low_stock():
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     mutation = """
     mutation {
       updateLowStockProducts {
@@ -45,20 +46,18 @@ def update_low_stock():
             "http://localhost:8000/graphql",
             json={"query": mutation}
         )
-
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        log_path = "/tmp/low_stock_updates_log.txt"
+        log_path = "/tmp/lowstockupdates_log.txt"
 
         if response.ok:
             data = response.json()["data"]["updateLowStockProducts"]
-            with open(log_path, "a") as log_file:
-                log_file.write(f"{timestamp} - {data['message']}\n")
-                for product in data["updated"]:
-                    log_file.write(f"{timestamp} - {product}\n")
+            with open(log_path, "a") as log:
+                log.write(f"{timestamp} - {data['message']}\n")
+                for name in data["updated"]:
+                    log.write(f"{timestamp} - Restocked: {name}\n")
         else:
-            with open(log_path, "a") as log_file:
-                log_file.write(f"{timestamp} - Mutation failed: {response.status_code}\n")
+            with open(log_path, "a") as log:
+                log.write(f"{timestamp} - Mutation failed: {response.status_code}\n")
 
     except Exception as e:
-        with open("/tmp/low_stock_updates_log.txt", "a") as log_file:
-            log_file.write(f"{timestamp} - Error: {e}\n")
+        with open("/tmp/lowstockupdates_log.txt", "a") as log:
+            log.write(f"{timestamp} - Exception: {e}\n")

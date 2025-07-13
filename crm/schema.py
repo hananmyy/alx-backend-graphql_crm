@@ -165,23 +165,23 @@ class Query(graphene.ObjectType):
 
 
 
-import graphene
-from crm.models import Product
+
 
 class UpdateLowStockProducts(graphene.Mutation):
-    class Arguments:
-        pass  # No arguments needed for this mutation
-
     updated = graphene.List(graphene.String)
     message = graphene.String()
 
     def mutate(self, info):
         low_stock_products = Product.objects.filter(stock__lt=10)
-        updated = []
+        updated_names = []
 
         for product in low_stock_products:
-            product.stock += 10
+            product.stock += 10  # Simulating restocking
             product.save()
-            updated.append(f"{product.name} (new stock: {product.stock})")
+            updated_names.append(f"{product.name} (new stock: {product.stock})")
 
-        return UpdateLowStockProducts(updated=updated, message="Products restocked.")
+        return UpdateLowStockProducts(updated=updated_names, message="Products successfully restocked.")
+    
+
+class Mutation(graphene.ObjectType):
+    update_low_stock_products = UpdateLowStockProducts.Field()
