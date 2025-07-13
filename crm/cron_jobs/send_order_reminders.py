@@ -25,7 +25,7 @@ try:
     result = client.execute(query)
     orders = result.get("pendingOrders", [])
 
-    with open("/tmp/orderreminderslog.txt", "a") as log:
+    with open("/tmp/order_reminders_log.txt", "a") as log:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         for order in orders:
             log.write(f"{timestamp} - Order ID: {order['id']}, Email: {order['customerEmail']}\n")
